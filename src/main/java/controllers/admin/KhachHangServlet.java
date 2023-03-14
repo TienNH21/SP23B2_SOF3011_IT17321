@@ -23,7 +23,17 @@ public class KhachHangServlet extends HttpServlet {
         HttpServletRequest request,
         HttpServletResponse response
     ) throws ServletException, IOException {
-        this.create(request, response);
+        String uri = request.getRequestURI();
+
+        if (uri.contains("create")) {
+            this.create(request, response);
+        } else if (uri.contains("edit")) {
+            //
+        } else if (uri.contains("delete")) {
+            //
+        } else {
+            this.index(request, response);
+        }
     }
 
     @Override
@@ -46,8 +56,9 @@ public class KhachHangServlet extends HttpServlet {
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
-//        request.getRequestDispatcher("/views/khach_hang/index.jsp")
-//                .forward(request, response);
+        request.setAttribute("danhSachKH", this.list);
+        request.getRequestDispatcher("/views/khach_hang/index.jsp")
+                .forward(request, response);
     }
 
     protected void store(
@@ -55,15 +66,15 @@ public class KhachHangServlet extends HttpServlet {
             HttpServletResponse response
     ) throws ServletException, IOException {
         String ma = request.getParameter("ma");
-        String ho = request.getParameter("ma");
-        String ten_dem = request.getParameter("ma");
-        String ten = request.getParameter("ma");
-        String ngay_sinh = request.getParameter("ma");
-        String sdt = request.getParameter("ma");
-        String dia_chi = request.getParameter("ma");
-        String mat_khau = request.getParameter("ma");
-        String quoc_gia = request.getParameter("ma");
-        String thanh_pho = request.getParameter("ma");
+        String ho = request.getParameter("ho");
+        String ten_dem = request.getParameter("ten_dem");
+        String ten = request.getParameter("ten");
+        String ngay_sinh = request.getParameter("ngay_sinh");
+        String sdt = request.getParameter("sdt");
+        String dia_chi = request.getParameter("dia_chi");
+        String mat_khau = request.getParameter("mat_khau");
+        String quoc_gia = request.getParameter("quoc_gia");
+        String thanh_pho = request.getParameter("thanh_pho");
         QLKhachHang qlkh = new QLKhachHang(ma, ho, ten_dem, ten, ngay_sinh, sdt, dia_chi, mat_khau, quoc_gia, thanh_pho);
 
         // Tạo ArrayList & thêm vào
