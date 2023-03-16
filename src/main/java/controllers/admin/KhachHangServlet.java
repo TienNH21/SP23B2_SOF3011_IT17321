@@ -3,6 +3,7 @@ package controllers.admin;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
+import repositories.KhachHangRepository;
 import view_model.QLKhachHang;
 
 import java.io.IOException;
@@ -17,7 +18,15 @@ import java.util.ArrayList;
     "/khach-hang/update",   // POST
 })
 public class KhachHangServlet extends HttpServlet {
-    private ArrayList<QLKhachHang> list = new ArrayList<>();
+    private KhachHangRepository khRepo;
+
+    public KhachHangServlet()
+    {
+        this.khRepo = new KhachHangRepository();
+        this.khRepo.insert(new QLKhachHang("PH1", "Ng", "Van", "A", "12-12-2022", "0123123123", "HN", "A", "VN", "HN"));
+        this.khRepo.insert(new QLKhachHang("PH1", "Tr", "Thi", "B", "12-12-2022", "0123123123", "HN", "A", "VN", "HN"));
+    }
+
     @Override
     protected void doGet(
         HttpServletRequest request,
@@ -30,10 +39,20 @@ public class KhachHangServlet extends HttpServlet {
         } else if (uri.contains("edit")) {
             //
         } else if (uri.contains("delete")) {
-            //
+            this.delete(request, response);
         } else {
             this.index(request, response);
         }
+    }
+
+    protected void delete(
+        HttpServletRequest request,
+        HttpServletResponse response
+    ) throws ServletException, IOException {
+        String ma = request.getParameter("ma");
+        QLKhachHang kh = this.khRepo.findByMa(ma);
+        this.khRepo.delete(kh);
+        response.sendRedirect("/SP23B2_SOF3011_IT17321_war_exploded/khach-hang/index");
     }
 
     @Override
@@ -56,7 +75,7 @@ public class KhachHangServlet extends HttpServlet {
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
-        request.setAttribute("danhSachKH", this.list);
+        request.setAttribute("danhSachKH", this.khRepo.findAll());
         request.getRequestDispatcher("/views/khach_hang/index.jsp")
                 .forward(request, response);
     }
@@ -77,7 +96,8 @@ public class KhachHangServlet extends HttpServlet {
         String thanh_pho = request.getParameter("thanh_pho");
         QLKhachHang qlkh = new QLKhachHang(ma, ho, ten_dem, ten, ngay_sinh, sdt, dia_chi, mat_khau, quoc_gia, thanh_pho);
 
-        // Tạo ArrayList & thêm vào
-        list.add(qlkh);
+        this.khRepo.insert(qlkh);
+
+        response.sendRedirect("/SP23B2_SOF3011_IT17321_war_exploded/khach-hang/index");
     }
 }
