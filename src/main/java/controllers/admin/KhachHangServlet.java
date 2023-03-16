@@ -37,12 +37,23 @@ public class KhachHangServlet extends HttpServlet {
         if (uri.contains("create")) {
             this.create(request, response);
         } else if (uri.contains("edit")) {
-            //
+            this.edit(request, response);
         } else if (uri.contains("delete")) {
             this.delete(request, response);
         } else {
             this.index(request, response);
         }
+    }
+
+    protected void edit(
+        HttpServletRequest request,
+        HttpServletResponse response
+    ) throws ServletException, IOException {
+        String ma = request.getParameter("ma");
+        QLKhachHang kh = this.khRepo.findByMa(ma);
+        request.setAttribute("kh", kh);
+        request.getRequestDispatcher("/views/khach_hang/edit.jsp")
+            .forward(request, response);
     }
 
     protected void delete(
