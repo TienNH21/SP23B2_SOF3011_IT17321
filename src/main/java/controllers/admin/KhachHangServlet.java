@@ -3,10 +3,12 @@ package controllers.admin;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
+import org.apache.commons.beanutils.BeanUtils;
 import repositories.KhachHangRepository;
 import view_model.QLKhachHang;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 @WebServlet({
@@ -71,7 +73,16 @@ public class KhachHangServlet extends HttpServlet {
         HttpServletRequest request,
         HttpServletResponse response
     ) throws ServletException, IOException {
-        this.store(request, response);
+        String uri = request.getRequestURI();
+        if (uri.contains("store")) {
+            this.store(request, response);
+        } else if (uri.contains("update")) {
+            this.update(request, response);
+        } else {
+            response.sendRedirect("/SP23B2_SOF3011_IT17321_war_exploded/khach-hang/index");
+            // 404
+            // 405
+        }
     }
 
     protected void create(
@@ -95,6 +106,23 @@ public class KhachHangServlet extends HttpServlet {
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
+        try {
+            QLKhachHang qlkh = new QLKhachHang();
+            BeanUtils.populate(qlkh, request.getParameterMap());
+            this.khRepo.insert(qlkh);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
+        response.sendRedirect("/SP23B2_SOF3011_IT17321_war_exploded/khach-hang/index");
+    }
+
+    protected void update(
+        HttpServletRequest request,
+        HttpServletResponse response
+    ) throws ServletException, IOException {
         String ma = request.getParameter("ma");
         String ho = request.getParameter("ho");
         String ten_dem = request.getParameter("ten_dem");
@@ -107,7 +135,9 @@ public class KhachHangServlet extends HttpServlet {
         String thanh_pho = request.getParameter("thanh_pho");
         QLKhachHang qlkh = new QLKhachHang(ma, ho, ten_dem, ten, ngay_sinh, sdt, dia_chi, mat_khau, quoc_gia, thanh_pho);
 
-        this.khRepo.insert(qlkh);
+        System.out.println(ma);
+        System.out.println(ten);
+        this.khRepo.update(qlkh);
 
         response.sendRedirect("/SP23B2_SOF3011_IT17321_war_exploded/khach-hang/index");
     }
