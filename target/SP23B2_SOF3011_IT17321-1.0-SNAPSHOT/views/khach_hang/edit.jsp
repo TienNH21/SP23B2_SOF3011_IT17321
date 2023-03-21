@@ -15,7 +15,7 @@
 <body>
     <div class="col-8 offset-2">
         <form method="POST"
-              action="/SP23B2_SOF3011_IT17321_war_exploded/khach-hang/update?ma_kh=${ kh.ma }">
+              action="/SP23B2_SOF3011_IT17321_war_exploded/khach-hang/update?ma=${ kh.ma }">
             <div class="row mt-3">
                 <div class="col-6">
                     <label>Mã</label>
